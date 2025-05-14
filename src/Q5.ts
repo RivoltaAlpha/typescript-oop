@@ -23,13 +23,13 @@ class Habitat extends Animal implements feedingStrategy {
 		const feedtwo = this.secondfeed;
 		const feedthree = this.thirdfeed;
 		// Calculate intervals in days
-		const msPerDay = 1000 * 60 * 60 * 24;
+		const msPerDay = 1000 * 60;
 		const feedInterval1 = (feedtwo.getTime() - feedone.getTime()) / msPerDay;
 		const feedInterval2 = (feedthree.getTime() - feedtwo.getTime()) / msPerDay;
 
 		console.log("Interval 1 (minutes):", feedInterval1);
 		console.log("Interval 2 (minutes):", feedInterval2);
-		const feedSummary = feedInterval1 + feedInterval2 / 2;
+		const feedSummary = (feedInterval1 + feedInterval2) / 2;
 		return feedSummary;
 	}
 }
