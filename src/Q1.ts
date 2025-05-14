@@ -1,10 +1,27 @@
-class LibraryItem {
+abstract class LibraryItem {
     constructor(public id: number, public item: string , public available: boolean, public borrowingDate:Date , public dueDate: Date, public returnDate: Date ){}
+
+    abstract getItem(): string
+}
+
+interface Borrowable{
+    checkout(item: LibraryItem): void;
+    returnItem(item: LibraryItem, returnDate: Date ): void;
+    
 }
 
 class Book extends LibraryItem {
-    constructor(public title: string, public author: string, public pages: number, available: boolean, id: number, item: string, borrowingDate:Date , dueDate: Date, returnDate: Date) {
+    constructor(
+        public title: string,
+        public author: string, 
+        public pages: number, 
+        available: boolean,  id: number, item: string, borrowingDate:Date , dueDate: Date, returnDate: Date) 
+        {
         super(id, item, available, borrowingDate, returnDate, dueDate);
+    }
+
+    getItem(): string{
+        return"Item book";
     }
 
     numberOfDays(): number {
@@ -24,7 +41,7 @@ class Book extends LibraryItem {
     }
 }
 
-// Example Book instance with placeholder values
+// Example 
 const NeverRead = new Book(
     "Sample Title",      // title
     "Sample Author",     // author
@@ -40,17 +57,79 @@ const NeverRead = new Book(
 // Example usage
 // console.log(NeverRead.calculateFine()); // Output: 2
 
-class User {
-    constructor(public name: string, public email:string, public roleOfMember: string, protected password:string){ }
-}
+class UserAccount {
+    private finedAmount: number = 0;
+    private bookingHistory: LibraryItem[] = []
 
-class Student extends User{
-    constructor(public regNumber: string, public accountNumber: number, name: string, email:string, roleOfMember: string, password:string){
-        super(name,email,password,roleOfMember)
+    constructor(public name: string, public email:string, public roleOfMember: string, protected password:string){ }
+
+    handleLogin(email: string, password: string): boolean {
+        if (this.email === email && this.password === password) {
+            console.log("Login successful");
+            return true;
+        } else {
+            console.log("Invalid email or password");
+            return false;
+        }
+    }
+
+    handleLogout(): void {
+        console.log("Logged out successfully");
+    }
+
+    borrowingHistory(): LibraryItem[] {
+        return this.bookingHistory;
+    }
+
+    // fine calculation 
+    
+    numberOfDays(): number {
+    const theday = this.returnDate;
+    const diffDays = theday.getDate() - this.dueDate.getDate();
+    console.log(diffDays)
+    return diffDays;
+}
+    calculateFine(item: LibraryItem):number {
+
+
+        let totalFine = 0;
+        if(!item.available){
+            const fine_amount = 10;
+            totalFine = this.numberOfDays() * fine_amount;
+        }
+        return totalFine;
+    }
+
+        getFines(): number {
+        return this.finedAmount;
     }
 }
-class Librarian extends User{
+
+class Student extends UserAccount implements Borrowable{
+    checkout(item: LibraryItem): void {
+        if (item.available) {
+            item.available = false;
+            // this.addToHistory(item);
+        }
+    }
+
+    returnItem(item: LibraryItem, returnDate: Date): void {
+        item.returnDate = returnDate;
+        item.available = true;
+        this.calculateFine(item);
+    }
+}
+class Librarian extends UserAccount{
     constructor(public workNumber: string, public accountNumber: number, name: string, email:string, roleOfMember: string, password:string ){
             super(name,email,password,roleOfMember)
     }
 }
+
+// // Example usage:
+// const book = new Book(1, "Sample Book", "Author", 200, true, new Date("2025-04-01"), new Date("2025-04-15"));
+// const member = new Member("Alice", "alice@email.com", "Member", "pass123");
+
+// member.checkout(book);
+// // ...later
+// member.returnItem(book, new Date("2025-04-20"));
+// console.log("Fine:", member.getFines()); // Fine: 50
