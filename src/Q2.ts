@@ -1,5 +1,6 @@
 abstract class Products {
     constructor(
+        public name: string,
         public productType: string,
         public purchaseday: string,
         public price: string, 
@@ -8,25 +9,46 @@ abstract class Products {
     abstract getProduct(): string;
 }
 
-class ElectronicProduct extends Product {
+class ElectronicProducts extends Products {
     constructor(name: string, price: number, public warranty: number) {
-        super(name, price);
+        super(name, "Electronic", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Electronic"; }
+
+    getProduct(): string {
+        return `Electronic: ${this.name}, Warranty: ${this.warranty} year(s), Price: $${this.price}`;
+    }
+
+    getType() {
+        return "Electronic";
+    }
 }
 
-class ClothingProduct extends Product {
+class ClothingProduct extends Products {
     constructor(name: string, price: number, public size: string) {
-        super(name, price);
+        super(name, "Clothing", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Clothing"; }
+
+    getProduct(): string {
+        return `Clothing: ${this.name}, Size: ${this.size}, Price: $${this.price}`;
+    }
+
+    getType() {
+        return "Clothing";
+    }
 }
 
-class FurnitureProduct extends Product {
+class FurnitureProduct extends Products {
     constructor(name: string, price: number, public material: string) {
-        super(name, price);
+        super(name, "Furniture", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Furniture"; }
+
+    getProduct(): string {
+        return `Furniture: ${this.name}, Material: ${this.material}, Price: $${this.price}`;
+    }
+
+    getType() {
+        return "Furniture";
+    }
 }
 
 class User {
@@ -63,7 +85,7 @@ class Cart {
     }
 }
 
-interface Borrowable{
+interface OrderItems{
     checkout(item: Order): void;
     returnItem(item: Order, returnDate: Date ): void;
     
