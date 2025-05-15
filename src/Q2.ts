@@ -1,5 +1,6 @@
 abstract class Products {
     constructor(
+        public name: string,
         public productType: string,
         public purchaseday: string,
         public price: string, 
@@ -8,25 +9,34 @@ abstract class Products {
     abstract getProduct(): string;
 }
 
-class ElectronicProduct extends Product {
+class ElectronicProducts extends Products {
     constructor(name: string, price: number, public warranty: number) {
-        super(name, price);
+        super(name, "Electronic", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Electronic"; }
+
+    getProduct(): string {
+        return "Electronic";
+    }
 }
 
-class ClothingProduct extends Product {
+class ClothingProduct extends Products {
     constructor(name: string, price: number, public size: string) {
-        super(name, price);
+        super(name, "Clothing", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Clothing"; }
+
+    getProduct(): string {
+        return "Clothing";
+    }
 }
 
-class FurnitureProduct extends Product {
+class FurnitureProduct extends Products {
     constructor(name: string, price: number, public material: string) {
-        super(name, price);
+        super(name, "Furniture", new Date().toISOString().split('T')[0], price.toString());
     }
-    getType() { return "Furniture"; }
+
+    getProduct(): string {
+        return "Furniture";
+    }
 }
 
 class User {
@@ -43,32 +53,6 @@ class User {
     }
 }
 
-interface Stuff {
-
-}
-
-class Order {
-        calculateTax(): void{
-
-    }
-    calculateDiscount(): void{
-
-    }
-}
-
-class Cart {
-
-    totalProducts(): void{
-
-    }
-}
-
-interface Borrowable{
-    checkout(item: Order): void;
-    returnItem(item: Order, returnDate: Date ): void;
-    
-}
-
 class Admin extends User{
     
 }
@@ -80,6 +64,80 @@ class Customer extends User{
 }
 
 // Encapsulation of cart/ checkout logic
+class Order extends Products {
+    constructor(
+        name: string,
+        productType: string,
+        purchaseday: string,
+        price: string,
+        public shippingDate: Date,
+        public orderingDate: Date,
+        public orderStatus: string,
+        private discountRate: number,
+        private cost: number,
+        public paid: boolean
+        
+    ){
+        super(name, productType, purchaseday, price);
+    }
+
+    getProduct(): string {
+        return `Order: ${this.name}, Type: ${this.productType}, Purchased: ${this.purchaseday}, Price: $${this.price}`;
+    }
+
+    calculateTax(): number{
+        const tax = 0.16
+        const taxedAmount = this.cost * tax
+        return taxedAmount
+    }
+    calculateDiscount(): number{
+        const discountedAmnt = 0.01 * this.discountRate
+        return discountedAmnt
+    }
+}
+
+class Cart {
+    private userProducts: Products[] = []
+
+    constructor(
+        public productStatus: string,
+        public userId: number,
+    ){}
+
+    totalProducts(): number{
+        return this.userProducts.length;
+
+    }
+}
+
+interface OrderItems{
+    checkout(item: Order): string;
+    shippingItem(item: Order, shippingDate: Date ): void;
+    
+}
+
+class BuyStuff extends Order implements OrderItems{
+    checkout(item: Order): string {
+        if (item.paid === true){
+            item.orderStatus = "Complete"
+        }
+        else{
+            item.orderStatus = "Pending"
+        }
+        return item.orderStatus
+    }
+    shippingItem(item: Order, _shippingDate: Date): string {
+        return `${item.productType} ${_shippingDate.toISOString()}`
+    }
+}
+
+// Example Usage
+const electronicProduct = new ElectronicProducts("Laptop", 1200, 2);
+const clothingProduct = new ClothingProduct("T-shirt", 20, "M");
+const furnitureProduct = new FurnitureProduct("Sofa", 500, "Leather");
+const order = new Order("Laptop", "Electronic", new Date().toISOString(), "1200", new Date(), new Date(), "Pending", 10, 1200, true);
+const cart = new Cart("Pending", 1);
+const buyStuff = new BuyStuff("Laptop", "Electronic", new Date().toISOString(), "1200", new Date(), new Date(), "Pending", 10, 1200, true);
 
 
 // Polymorphism 
@@ -115,8 +173,8 @@ const creditCardPayment = new CreditCardPayment();
 const payPalPayment = new PayPalPayment();
 const bankTransferPayment = new BankTransferPayment();
 
-makePayment(creditCardPayment, 100);
-makePayment(payPalPayment, 200);
-makePayment(bankTransferPayment, 300);
+// makePayment(creditCardPayment, 100);
+// makePayment(payPalPayment, 200);
+// makePayment(bankTransferPayment, 300);
 
 

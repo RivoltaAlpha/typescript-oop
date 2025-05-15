@@ -4,10 +4,9 @@ abstract class LibraryItem {
     abstract getItem(): string
 }
 
-interface Borrowable{
+interface Borrowable {
     checkout(item: LibraryItem): void;
-    returnItem(item: LibraryItem, returnDate: Date ): void;
-    
+    returnItem(item: LibraryItem, returnDate: Date): void;
 }
 
 class Book extends LibraryItem {
@@ -82,23 +81,21 @@ class UserAccount {
     }
 
     // fine calculation 
-    
-    numberOfDays(): number {
-    const theday = this.returnDate;
-    const diffDays = theday.getDate() - this.dueDate.getDate();
+    numberOfDays(item: LibraryItem): number {
+    const theday = item.returnDate;
+    const diffDays = theday.getDate() - item.dueDate.getDate();
     console.log(diffDays)
     return diffDays;
-}
-    calculateFine(item: LibraryItem):number {
-
-
+    }
+    calculateFine(item: LibraryItem): number {
         let totalFine = 0;
-        if(!item.available){
+        if (!item.available) {
             const fine_amount = 10;
-            totalFine = this.numberOfDays() * fine_amount;
+            totalFine = this.numberOfDays(item) * fine_amount;
         }
         return totalFine;
     }
+
 
         getFines(): number {
         return this.finedAmount;
@@ -109,7 +106,6 @@ class Student extends UserAccount implements Borrowable{
     checkout(item: LibraryItem): void {
         if (item.available) {
             item.available = false;
-            // this.addToHistory(item);
         }
     }
 
