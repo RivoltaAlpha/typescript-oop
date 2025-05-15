@@ -75,3 +75,6 @@ const jungle = new Habitat(
 	todayAt("18:15:00")
 );
 console.log(jungle.habitatMonitor());
+
+const gazzelle = new Birds("gazzelle", 12, "herbivore");
+console.log(gazzelle.feedingLogic());
