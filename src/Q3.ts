@@ -40,9 +40,6 @@ class Course {
     constructor(public courseName: string, public courseCode: string, public credits: number) { }
 }
 
-
-Enrollment Class → maps students to courses with grading logic
-
 // Assessment Interface implemented by Quiz, Assignment, Project
 interface Assessment {
     title: string;
@@ -51,7 +48,7 @@ interface Assessment {
     grade(score: number): string;
 }
 
-class EncapsulatedAssesment implements Assessment{
+abstract class EncapsulatedAssesment implements Assessment{
     constructor(
     public  title: string,
     public maxScore: number,
@@ -68,28 +65,68 @@ class EncapsulatedAssesment implements Assessment{
         return "F";
     }
 }
-
 class Quiz extends EncapsulatedAssesment {
     grade(score: number): string {
         return this.gradeCalculation(score);
     }
 }
-
 class Assignment extends EncapsulatedAssesment {
     grade(score: number): string {
         return this.gradeCalculation(score);
     }
 }
-
 class Project extends EncapsulatedAssesment {
     grade(score: number): string {
         return this.gradeCalculation(score);
     }
 }
 
+// Composite pattern for Course Content.
+interface CourseContent {
+    getTitle(): string;
+}
+
+// Component Interface
+interface CourseContent {
+    getTitle(): string;
+}
+
+// Leaf classes
+class Lecture implements CourseContent {
+    constructor(private title: string) {}
+    getTitle(): string { 
+        console.log(`Lecture: ${this.title}`);
+        return this.title; 
+    }
+}
+
+class AssignmentContent implements CourseContent {
+    constructor(private title: string) {}
+    getTitle(): string { 
+        console.log(`Assignment: ${this.title}`);
+        return this.title; 
+    }
+}
+
+// Composite class
+class Module implements CourseContent {
+    private contents: CourseContent[] = [];
+    constructor(private title: string) {}
+
+    addContent(content: CourseContent): void {
+        this.contents.push(content);
+    }
+
+    getTitle(): string { 
+        console.log(`Module: ${this.title}`);
+        return this.title; 
+    }
+}
+
+
 
 // Notification System for reminders and feedback
-class Notification {
+class NotificationSystem {
     constructor(public message: string, public recipient: string) { }
 
     sendNotification(): void {
@@ -100,3 +137,14 @@ class Notification {
     }
 }
 
+class Enrollment {
+    constructor(
+        public student: UniStudent,
+        public course: Course,
+        private assessments: []
+    ) {}
+
+    submitAssessment(assessment: Assessment, score: number): void {
+    }
+
+}
