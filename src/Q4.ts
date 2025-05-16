@@ -1,4 +1,4 @@
-abstract class User {
+abstract class UserQ5 {
     constructor(protected id: string,
     protected name: string,
     protected email: string,
@@ -27,7 +27,7 @@ abstract class User {
   }
 }
 
-class Driver extends User {
+class Driver extends UserQ5 {
   constructor(
     id: string,
     name: string,
@@ -68,7 +68,7 @@ interface PaymentMethod {
   details: string;
 }
 
-class Passenger extends User {
+class Passenger extends UserQ5 {
   constructor(
     id: string,
     name: string,
@@ -438,41 +438,41 @@ class RatingService {
     }
   }
   
-  getUserRating(user: User): number {
-    return user.getRating();
+  getUserQ5Rating(userQ5: UserQ5): number {
+    return userQ5.getRating();
   }
 }
 
 class RideHistoryService {
   private rideHistory: Map<string, Ride[]> = new Map();
   
-  addRideToHistory(userId: string, ride: Ride): void {
-    const userRides = this.rideHistory.get(userId) || [];
-    userRides.push(ride);
-    this.rideHistory.set(userId, userRides);
+  addRideToHistory(userQ5Id: string, ride: Ride): void {
+    const userQ5Rides = this.rideHistory.get(userQ5Id) || [];
+    userQ5Rides.push(ride);
+    this.rideHistory.set(userQ5Id, userQ5Rides);
   }
   
-  getUserRideHistory(userId: string): Ride[] {
-    return this.rideHistory.get(userId) || [];
+  getUserQ5RideHistory(userQ5Id: string): Ride[] {
+    return this.rideHistory.get(userQ5Id) || [];
   }
 }
 
 class AuthenticationService {
-  private users: Map<string, User> = new Map();
+  private userQ5s: Map<string, UserQ5> = new Map();
   
-  register(user: User): boolean {
-    if (this.users.has(user.getId())) {
+  register(userQ5: UserQ5): boolean {
+    if (this.userQ5s.has(userQ5.getId())) {
       return false;
     }
     
-    this.users.set(user.getId(), user);
+    this.userQ5s.set(userQ5.getId(), userQ5);
     return true;
   }
   
-  login(email: string, password: string): User | null {
-    for (const user of this.users.values()) {
-      if (user instanceof User && user.getEmail() === email && user['password'] === password) {
-        return user;
+  login(email: string, password: string): UserQ5 | null {
+    for (const userQ5 of this.userQ5s.values()) {
+      if (userQ5 instanceof UserQ5 && userQ5.getEmail() === email && userQ5['password'] === password) {
+        return userQ5;
       }
     }
     return null;
@@ -494,11 +494,11 @@ class RideSharingApp {
     this.rideHistoryService = new RideHistoryService();
   }
   
-  registerUser(user: User): boolean {
-    return this.authService.register(user);
+  registerUserQ5(userQ5: UserQ5): boolean {
+    return this.authService.register(userQ5);
   }
   
-  loginUser(email: string, password: string): User | null {
+  loginUserQ5(email: string, password: string): UserQ5 | null {
     return this.authService.login(email, password);
   }
   
@@ -551,15 +551,15 @@ class RideSharingApp {
     this.ratingService.rateRide(ride, passengerRating, driverRating);
   }
   
-  getUserRideHistory(userId: string): Ride[] {
-    return this.rideHistoryService.getUserRideHistory(userId);
+  getUserQ5RideHistory(userQ5Id: string): Ride[] {
+    return this.rideHistoryService.getUserQ5RideHistory(userQ5Id);
   }
 }
 
 function demonstrateRideSharingApp(): void {
     const app = new RideSharingApp();
     
-    // Register users
+    // Register userQ5s
     const passenger = new Passenger("P1", "John Doe", "john@example.com", "1234567890", "pass123");
     const driver = new Driver(
         "D1",
@@ -573,8 +573,8 @@ function demonstrateRideSharingApp(): void {
         { latitude: 40.7130, longitude: -74.0070 } // currentLocation
     );
 
-    app.registerUser(passenger);
-    app.registerUser(driver);
+    app.registerUserQ5(passenger);
+    app.registerUserQ5(driver);
     app.setDriverAvailability(driver, true);
 
     console.log("Passenger Info:");
@@ -608,7 +608,7 @@ function demonstrateRideSharingApp(): void {
     console.log(`Driver rated passenger: ${passenger.getRating()}`)
 
     // check ride history
-     const passengerRideHistory = app.getUserRideHistory(passenger.getId());
+     const passengerRideHistory = app.getUserQ5RideHistory(passenger.getId());
     console.log(`Passenger has ${passengerRideHistory.length} rides in history`);
   } else {
     console.log("No drivers available nearby");
